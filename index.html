@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ati Motors - CS Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900">
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+
+const AtiMotorsCSsDashboard = () => {
+  const [activeTab, setActiveTab] = useState("summary");
+  const [searchSummary, setSearchSummary] = useState("");
+  const [searchBots, setSearchBots] = useState("");
+  const [searchSpares, setSearchSpares] = useState("");
+  const [searchJira, setSearchJira] = useState("");
+  const [searchCsm, setSearchCsm] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+  // Tab 1: Customer Summary Data
+  const customerSummaryData = [
+    { customer: "ceat-nagpur", total: 3174, successful: 3150, distance: 800.0, msr: 99.24 },
+    { customer: "YOKOHAMA-DAHEJ", total: 1896, successful: 1860, distance: 949.4, msr: 98.10 },
+    { customer: "CEAT-Vadodara", total: 1600, successful: 1545, distance: 328.7, msr: 96.56 },
+    { customer: "TVS-Hosur", total: 1413, successful: 1310, distance: 269.2, msr: 92.71 },
+    { customer: "Yokohama-Haryana", total: 1032, successful: 1025, distance: 339.5, msr: 99.32 },
+    { customer: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", total: 974, successful: 967, distance: 512.0, msr: 99.28 },
+    { customer: "Valeo-Greensburg", total: 845, successful: 836, distance: 318.0, msr: 98.93 },
+    { customer: "Samsung VD-Chennai", total: 761, successful: 726, distance: 39.1, msr: 95.40 },
+    { customer: "Bosch_Pune", total: 736, successful: 736, distance: 273.1, msr: 100.00 },
+    { customer: "Schneider-Electric-Chennai", total: 706, successful: 664, distance: 140.5, msr: 94.05 },
+    { customer: "Yokohama-Vizag", total: 634, successful: 596, distance: 300.2, msr: 94.01 },
+    { customer: "Autoliv India Private Ltd-Bangalore", total: 626, successful: 622, distance: 93.1, msr: 99.36 },
+    { customer: "Hindustan Unilever-Pondicherry-Pondicherry", total: 594, successful: 559, distance: 107.3, msr: 94.11 },
+    { customer: "Toyoda_Gosei", total: 531, successful: 525, distance: 134.0, msr: 98.87 },
+    { customer: "Aisin-NARSAPURA KOLAR", total: 516, successful: 492, distance: 109.5, msr: 95.35 },
+    { customer: "Valeo-US", total: 426, successful: 414, distance: 224.3, msr: 97.18 },
+    { customer: "Forvia_Columbus_Canning", total: 386, successful: 376, distance: 170.5, msr: 97.41 },
+    { customer: "Electrolux-Rayong", total: 385, successful: 359, distance: 380.6, msr: 93.25 },
+    { customer: "Hindustan Unilever-Silvassa", total: 366, successful: 349, distance: 42.1, msr: 95.36 },
+    { customer: "Kostal-Queretaro", total: 300, successful: 299, distance: 81.7, msr: 99.67 },
+    { customer: "Ashok leyland-Hosur", total: 254, successful: 217, distance: 110.7, msr: 85.43 },
+    { customer: "Airbus-US", total: 222, successful: 206, distance: 94.2, msr: 92.79 },
+    { customer: "Brose-Alabama", total: 197, successful: 178, distance: 252.2, msr: 90.36 },
+    { customer: "Tenneco-Michigan-US", total: 190, successful: 178, distance: 93.0, msr: 93.68 },
+    { customer: "Maduracoats-Tirunelveli", total: 189, successful: 189, distance: 44.0, msr: 100.00 },
+    { customer: "Maruti Suzuki Manufacturing Plant-Kharkhoda", total: 174, successful: 173, distance: 53.7, msr: 99.43 },
+    { customer: "Bosch Lite-Bangalore", total: 145, successful: 143, distance: 4.9, msr: 98.62 },
+    { customer: "Hindustan Unilever-Sumerpur", total: 110, successful: 83, distance: 13.1, msr: 75.45 },
+    { customer: "Luminous Power Technologies-Pantnagar", total: 91, successful: 76, distance: 31.4, msr: 83.52 },
+    { customer: "Sanmina-Chennai", total: 89, successful: 84, distance: 28.3, msr: 94.38 },
+    { customer: "Turbo Energy-Pulivalam", total: 86, successful: 81, distance: 73.8, msr: 94.19 },
+    { customer: "Saft-US", total: 84, successful: 84, distance: 27.0, msr: 100.00 },
+    { customer: "Harley Davidson-York", total: 72, successful: 62, distance: 18.2, msr: 86.11 },
+    { customer: "Fleetguard Filters-Hosur", total: 48, successful: 24, distance: 5.5, msr: 50.00 },
+    { customer: "Bekaert-Pune", total: 38, successful: 20, distance: 21.8, msr: 52.63 },
+    { customer: "Epiroc-Nashik", total: 30, successful: 27, distance: 7.5, msr: 90.00 },
+    { customer: "Forbes_Marshall-Pune", total: 10, successful: 10, distance: 4.7, msr: 100.00 },
+    { customer: "Meril-Vapi", total: 8, successful: 0, distance: 4.4, msr: 0.00 },
+    { customer: "schneider electric -Bangalore", total: 5, successful: 4, distance: 1.0, msr: 80.00 }
+  ];
+
+  // Tab 2: Bot Performance Rankings Data (90d + 7d)
+  const botPerformanceData = [
+    { bot: "tug-107-ceat-nagpur-12", site: "ceat-nagpur", trips7d: 403, successful7d: 399, msr7d: 99.0, kms7d: 76.51, trips90d: 5426, successful90d: 5415, msr90d: 99.8, kms90d: 1087.80 },
+    { bot: "tug-53-ceat-nagpur-07", site: "ceat-nagpur", trips7d: 401, successful7d: 400, msr7d: 99.8, kms7d: 73.81, trips90d: 4852, successful90d: 4847, msr90d: 99.9, kms90d: 893.07 },
+    { bot: "tug-111-ceat-nagpur-15", site: "ceat-nagpur", trips7d: 406, successful7d: 403, msr7d: 99.3, kms7d: 76.94, trips90d: 4735, successful90d: 4723, msr90d: 99.7, kms90d: 897.28 },
+    { bot: "tug-156", site: "Aisin-NARSAPURA KOLAR", trips7d: 516, successful7d: 492, msr7d: 95.3, kms7d: 109.45, trips90d: 4689, successful90d: 4467, msr90d: 95.3, kms90d: 1001.82 },
+    { bot: "tug-51-ceat-nagpur-05", site: "ceat-nagpur", trips7d: 228, successful7d: 225, msr7d: 98.7, kms7d: 53.15, trips90d: 4657, successful90d: 4646, msr90d: 99.8, kms90d: 1089.07 },
+    { bot: "tug-144", site: "Yokohama-Haryana", trips7d: 358, successful7d: 357, msr7d: 99.7, kms7d: 112.19, trips90d: 4050, successful90d: 4001, msr90d: 98.8, kms90d: 1260.42 },
+    { bot: "tug-85", site: "YOKOHAMA-DAHEJ", trips7d: 325, successful7d: 323, msr7d: 99.4, kms7d: 111.22, trips90d: 3938, successful90d: 3931, msr90d: 99.8, kms90d: 1417.49 },
+    { bot: "xt-17", site: "Bosch_Pune", trips7d: 361, successful7d: 361, msr7d: 100.0, kms7d: 239.02, trips90d: 3922, successful90d: 3916, msr90d: 99.8, kms90d: 2619.74 },
+    { bot: "tug-104-ceat-nagpur-11", site: "ceat-nagpur", trips7d: 297, successful7d: 297, msr7d: 100.0, kms7d: 129.91, trips90d: 3815, successful90d: 3793, msr90d: 99.4, kms90d: 1296.27 },
+    { bot: "tug-109-ceat-nagpur-13", site: "ceat-nagpur", trips7d: 331, successful7d: 328, msr7d: 99.1, kms7d: 62.72, trips90d: 3730, successful90d: 3715, msr90d: 99.6, kms90d: 707.04 },
+    { bot: "lite-38", site: "Hindustan Unilever-Pondicherry-Pondicherry", trips7d: 343, successful7d: 320, msr7d: 93.3, kms7d: 63.45, trips90d: 3663, successful90d: 3493, msr90d: 95.4, kms90d: 677.95 },
+    { bot: "flexfork-02", site: "Samsung VD-Chennai", trips7d: 450, successful7d: 428, msr7d: 95.1, kms7d: 22.91, trips90d: 3603, successful90d: 3419, msr90d: 94.9, kms90d: 176.97 },
+    { bot: "lite-37", site: "Hindustan Unilever-Pondicherry-Pondicherry", trips7d: 251, successful7d: 239, msr7d: 95.2, kms7d: 43.84, trips90d: 3535, successful90d: 3389, msr90d: 95.9, kms90d: 653.17 },
+    { bot: "tug-149", site: "Yokohama-Haryana", trips7d: 389, successful7d: 386, msr7d: 99.2, kms7d: 111.89, trips90d: 3500, successful90d: 3458, msr90d: 98.8, kms90d: 1000.92 },
+    { bot: "tug-110-ceat-nagpur-14", site: "ceat-nagpur", trips7d: 361, successful7d: 361, msr7d: 100.0, kms7d: 105.97, trips90d: 3367, successful90d: 3341, msr90d: 99.2, kms90d: 787.29 },
+    { bot: "xt-lite-20", site: "Bosch_Pune", trips7d: 375, successful7d: 375, msr7d: 100.0, kms7d: 34.05, trips90d: 3286, successful90d: 3273, msr90d: 99.6, kms90d: 298.85 },
+    { bot: "tug-64", site: "YOKOHAMA-DAHEJ", trips7d: 329, successful7d: 328, msr7d: 99.7, kms7d: 112.47, trips90d: 3148, successful90d: 3124, msr90d: 99.2, kms90d: 1226.56 },
+    { bot: "tug-182", site: "Maduracoats-Tirunelveli", trips7d: 189, successful7d: 189, msr7d: 100.0, kms7d: 43.99, trips90d: 2783, successful90d: 2753, msr90d: 98.9, kms90d: 647.42 },
+    { bot: "flexfork-01", site: "Samsung VD-Chennai", trips7d: 311, successful7d: 298, msr7d: 95.8, kms7d: 16.21, trips90d: 2665, successful90d: 2490, msr90d: 93.4, kms90d: 131.66 },
+    { bot: "tug-76-toyoda-gosei-bidadi-01", site: "Toyoda_Gosei", trips7d: 269, successful7d: 266, msr7d: 98.9, kms7d: 67.39, trips90d: 2540, successful90d: 2478, msr90d: 97.6, kms90d: 649.32 },
+    { bot: "tug-63-toyoda-gosei-bidadi-01", site: "Toyoda_Gosei", trips7d: 262, successful7d: 259, msr7d: 98.9, kms7d: 66.60, trips90d: 2528, successful90d: 2464, msr90d: 97.5, kms90d: 647.62 },
+    { bot: "tug-20-tvsmotor-hosur-02", site: "TVS-Hosur", trips7d: 225, successful7d: 224, msr7d: 99.6, kms7d: 39.25, trips90d: 2525, successful90d: 2503, msr90d: 99.1, kms90d: 441.61 },
+    { bot: "tug-55-tvsmotor-hosur-09", site: "TVS-Hosur", trips7d: 271, successful7d: 248, msr7d: 91.5, kms7d: 57.90, trips90d: 2509, successful90d: 2351, msr90d: 93.7, kms90d: 534.87 },
+    { bot: "tug-33-ceat-nagpur-spare", site: "ceat-nagpur", trips7d: 266, successful7d: 264, msr7d: 99.2, kms7d: 122.40, trips90d: 2489, successful90d: 2443, msr90d: 98.2, kms90d: 1145.23 },
+    { bot: "tug-92", site: "Yokohama-Vizag", trips7d: 169, successful7d: 168, msr7d: 99.4, kms7d: 50.60, trips90d: 2400, successful90d: 2389, msr90d: 99.5, kms90d: 717.37 },
+    { bot: "AMG-AB-ROUTE-01-02-TUG-188", site: "Autoliv India Private Ltd-Bangalore", trips7d: 247, successful7d: 247, msr7d: 100.0, kms7d: 30.25, trips90d: 2202, successful90d: 2183, msr90d: 99.1, kms90d: 271.45 },
+    { bot: "tug-65", site: "Yokohama-Vizag", trips7d: 166, successful7d: 166, msr7d: 100.0, kms7d: 61.53, trips90d: 2189, successful90d: 2183, msr90d: 99.7, kms90d: 810.45 },
+    { bot: "tug-140", site: "TVS-Hosur", trips7d: 182, successful7d: 152, msr7d: 83.5, kms7d: 16.47, trips90d: 2175, successful90d: 1890, msr90d: 86.9, kms90d: 199.65 },
+    { bot: "tug-141", site: "YOKOHAMA-DAHEJ", trips7d: 213, successful7d: 209, msr7d: 98.1, kms7d: 82.01, trips90d: 2038, successful90d: 2025, msr90d: 99.4, kms90d: 780.26 },
+    { bot: "lite-29", site: "Hindustan Unilever-Silvassa", trips7d: 366, successful7d: 349, msr7d: 95.4, kms7d: 42.13, trips90d: 2033, successful90d: 1905, msr90d: 93.7, kms90d: 225.16 },
+    { bot: "xt-04", site: "YOKOHAMA-DAHEJ", trips7d: 80, successful7d: 72, msr7d: 90.0, kms7d: 57.48, trips90d: 2003, successful90d: 1969, msr90d: 98.3, kms90d: 1002.73 },
+    { bot: "tug-121", site: "YOKOHAMA-DAHEJ", trips7d: 193, successful7d: 193, msr7d: 100.0, kms7d: 138.37, trips90d: 1959, successful90d: 1948, msr90d: 99.4, kms90d: 1404.20 },
+    { bot: "tug-151", site: "Yokohama-Haryana", trips7d: 285, successful7d: 282, msr7d: 98.9, kms7d: 115.43, trips90d: 1942, successful90d: 1895, msr90d: 97.6, kms90d: 772.48 },
+    { bot: "xt-lite-09", site: "Kostal-Queretaro", trips7d: 300, successful7d: 299, msr7d: 99.7, kms7d: 81.67, trips90d: 1873, successful90d: 1851, msr90d: 98.8, kms90d: 478.52 },
+    { bot: "AMR-001", site: "Electrolux-Rayong", trips7d: 197, successful7d: 179, msr7d: 90.9, kms7d: 194.14, trips90d: 1851, successful90d: 1693, msr90d: 91.5, kms90d: 1835.39 },
+    { bot: "tug-113", site: "YOKOHAMA-DAHEJ", trips7d: 135, successful7d: 134, msr7d: 99.3, kms7d: 96.97, trips90d: 1820, successful90d: 1782, msr90d: 97.9, kms90d: 1209.37 },
+    { bot: "AMG-01-ROUTE-04-TUG-171", site: "Autoliv India Private Ltd-Bangalore", trips7d: 117, successful7d: 116, msr7d: 99.1, kms7d: 19.69, trips90d: 1813, successful90d: 1773, msr90d: 97.8, kms90d: 293.54 },
+    { bot: "tug-163", site: "Airbus-US", trips7d: 136, successful7d: 126, msr7d: 92.6, kms7d: 44.23, trips90d: 1809, successful90d: 1765, msr90d: 97.6, kms90d: 583.47 },
+    { bot: "AMG-01-ROUTE-05-TUG-185", site: "Autoliv India Private Ltd-Bangalore", trips7d: 136, successful7d: 135, msr7d: 99.3, kms7d: 28.25, trips90d: 1796, successful90d: 1759, msr90d: 97.9, kms90d: 369.80 },
+    { bot: "AMR-002", site: "Electrolux-Rayong", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 1773, successful90d: 1604, msr90d: 90.5, kms90d: 1761.71 },
+    { bot: "xt-lite-08", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 181, successful7d: 180, msr7d: 99.4, kms7d: 87.01, trips90d: 1771, successful90d: 1768, msr90d: 99.8, kms90d: 858.52 },
+    { bot: "tug-11", site: "TVS-Hosur", trips7d: 127, successful7d: 122, msr7d: 96.1, kms7d: 16.69, trips90d: 1768, successful90d: 1672, msr90d: 94.6, kms90d: 239.39 },
+    { bot: "xt-lite-07", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 183, successful7d: 183, msr7d: 100.0, kms7d: 89.95, trips90d: 1761, successful90d: 1749, msr90d: 99.3, kms90d: 865.96 },
+    { bot: "tug-112-ceat-nagpur-16", site: "ceat-nagpur", trips7d: 351, successful7d: 347, msr7d: 98.9, kms7d: 68.34, trips90d: 1716, successful90d: 1700, msr90d: 99.1, kms90d: 439.38 },
+    { bot: "tug-131", site: "Forvia_Columbus_Canning", trips7d: 193, successful7d: 187, msr7d: 96.9, kms7d: 85.25, trips90d: 1671, successful90d: 1639, msr90d: 98.1, kms90d: 738.14 },
+    { bot: "AMG-02-ROUTE-03-TUG-170", site: "Autoliv India Private Ltd-Bangalore", trips7d: 126, successful7d: 124, msr7d: 98.4, kms7d: 14.95, trips90d: 1604, successful90d: 1560, msr90d: 97.3, kms90d: 190.90 },
+    { bot: "tug-39-tvsmotor-hosur-07", site: "TVS-Hosur", trips7d: 359, successful7d: 343, msr7d: 95.5, kms7d: 86.43, trips90d: 1599, successful90d: 1534, msr90d: 95.9, kms90d: 384.66 },
+    { bot: "tug-115", site: "CEAT-Vadodara", trips7d: 255, successful7d: 245, msr7d: 96.1, kms7d: 52.54, trips90d: 1569, successful90d: 1499, msr90d: 95.5, kms90d: 359.52 },
+    { bot: "tug-83", site: "CEAT-Vadodara", trips7d: 240, successful7d: 231, msr7d: 96.3, kms7d: 48.92, trips90d: 1559, successful90d: 1490, msr90d: 95.6, kms90d: 364.46 },
+    { bot: "tug-32-ceat-nagpur-01", site: "ceat-nagpur", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 1552, successful90d: 1550, msr90d: 99.9, kms90d: 285.66 },
+    { bot: "xt-lite-15", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 165, successful7d: 163, msr7d: 98.8, kms7d: 85.26, trips90d: 1530, successful90d: 1524, msr90d: 99.6, kms90d: 788.42 },
+    { bot: "tug-100-us-10", site: "Valeo-Greensburg", trips7d: 206, successful7d: 205, msr7d: 99.5, kms7d: 79.03, trips90d: 1527, successful90d: 1513, msr90d: 99.1, kms90d: 588.56 },
+    { bot: "xt-lite-10", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 164, successful7d: 163, msr7d: 99.4, kms7d: 84.75, trips90d: 1515, successful90d: 1506, msr90d: 99.4, kms90d: 820.76 },
+    { bot: "tug-167", site: "Valeo-US", trips7d: 109, successful7d: 104, msr7d: 95.4, kms7d: 54.90, trips90d: 1482, successful90d: 1418, msr90d: 95.7, kms90d: 861.08 },
+    { bot: "xt-lite-11", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 141, successful7d: 139, msr7d: 98.6, kms7d: 82.99, trips90d: 1440, successful90d: 1422, msr90d: 98.8, kms90d: 805.89 },
+    { bot: "xt-03", site: "Maruti Suzuki Manufacturing Plant-Kharkhoda", trips7d: 57, successful7d: 57, msr7d: 100.0, kms7d: 16.24, trips90d: 1432, successful90d: 1426, msr90d: 99.6, kms90d: 409.20 },
+    { bot: "tug-152", site: "CEAT-Vadodara", trips7d: 225, successful7d: 220, msr7d: 97.8, kms7d: 46.34, trips90d: 1420, successful90d: 1362, msr90d: 95.9, kms90d: 330.79 },
+    { bot: "tug-127", site: "Forvia_Columbus_Canning", trips7d: 193, successful7d: 189, msr7d: 97.9, kms7d: 85.25, trips90d: 1401, successful90d: 1367, msr90d: 97.6, kms90d: 618.33 },
+    { bot: "xt-lite-13", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 107, successful7d: 106, msr7d: 99.1, kms7d: 62.81, trips90d: 1393, successful90d: 1384, msr90d: 99.4, kms90d: 813.42 },
+    { bot: "tug-159", site: "Valeo-Greensburg", trips7d: 193, successful7d: 193, msr7d: 100.0, kms7d: 73.70, trips90d: 1376, successful90d: 1367, msr90d: 99.3, kms90d: 547.72 },
+    { bot: "tug-23-tvsmotor-hosur-03", site: "TVS-Hosur", trips7d: 145, successful7d: 127, msr7d: 87.6, kms7d: 32.87, trips90d: 1359, successful90d: 1216, msr90d: 89.5, kms90d: 307.69 },
+    { bot: "pallet-mover-04", site: "Luminous Power Technologies-Pantnagar", trips7d: 91, successful7d: 76, msr7d: 83.5, kms7d: 31.37, trips90d: 1358, successful90d: 1069, msr90d: 78.7, kms90d: 395.75 },
+    { bot: "xt-19", site: "Turbo Energy-Pulivalam", trips7d: 86, successful7d: 81, msr7d: 94.2, kms7d: 73.81, trips90d: 1341, successful90d: 1268, msr90d: 94.6, kms90d: 1097.33 },
+    { bot: "tug-139", site: "CEAT-Vadodara", trips7d: 218, successful7d: 214, msr7d: 98.2, kms7d: 44.89, trips90d: 1317, successful90d: 1263, msr90d: 95.9, kms90d: 308.00 },
+    { bot: "tug-137", site: "YOKOHAMA-DAHEJ", trips7d: 193, successful7d: 192, msr7d: 99.5, kms7d: 138.56, trips90d: 1303, successful90d: 1284, msr90d: 98.5, kms90d: 818.93 },
+    { bot: "tug-86", site: "CEAT-Vadodara", trips7d: 254, successful7d: 247, msr7d: 97.2, kms7d: 51.51, trips90d: 1215, successful90d: 1147, msr90d: 94.4, kms90d: 281.40 },
+    { bot: "tug-189", site: "Yokohama-Vizag", trips7d: 103, successful7d: 89, msr7d: 86.4, kms7d: 42.57, trips90d: 1199, successful90d: 1004, msr90d: 83.7, kms90d: 569.95 },
+    { bot: "tug-91", site: "CEAT-Vadodara", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 1185, successful90d: 1128, msr90d: 95.2, kms90d: 281.27 },
+    { bot: "tug-120", site: "CEAT-Vadodara", trips7d: 181, successful7d: 174, msr7d: 96.1, kms7d: 37.38, trips90d: 1139, successful90d: 1058, msr90d: 92.9, kms90d: 259.28 },
+    { bot: "xt-05", site: "YOKOHAMA-DAHEJ", trips7d: 62, successful7d: 56, msr7d: 90.3, kms7d: 43.15, trips90d: 1110, successful90d: 1032, msr90d: 93.0, kms90d: 778.37 },
+    { bot: "tug-108", site: "YOKOHAMA-DAHEJ", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 1093, successful90d: 1080, msr90d: 98.8, kms90d: 627.57 },
+    { bot: "tug-119", site: "YOKOHAMA-DAHEJ", trips7d: 86, successful7d: 86, msr7d: 100.0, kms7d: 27.28, trips90d: 1092, successful90d: 1075, msr90d: 98.4, kms90d: 348.92 },
+    { bot: "tug-183", site: "Yokohama-Vizag", trips7d: 83, successful7d: 68, msr7d: 81.9, kms7d: 75.17, trips90d: 1092, successful90d: 846, msr90d: 77.5, kms90d: 1175.51 },
+    { bot: "tug-134", site: "TVS-Hosur", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 1092, successful90d: 1050, msr90d: 96.2, kms90d: 263.49 },
+    { bot: "tug-90-yokohama-dahej-03", site: "YOKOHAMA-DAHEJ", trips7d: 66, successful7d: 61, msr7d: 92.4, kms7d: 17.17, trips90d: 1066, successful90d: 1053, msr90d: 98.8, kms90d: 255.88 },
+    { bot: "tug-176", site: "Airbus-US", trips7d: 86, successful7d: 80, msr7d: 93.0, kms7d: 49.92, trips90d: 999, successful90d: 946, msr90d: 94.7, kms90d: 579.32 },
+    { bot: "sherpa10k-02", site: "Tenneco-Michigan-US", trips7d: 77, successful7d: 69, msr7d: 89.6, kms7d: 20.13, trips90d: 974, successful90d: 880, msr90d: 90.3, kms90d: 269.81 },
+    { bot: "tug-143", site: "ceat-nagpur", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 962, successful90d: 939, msr90d: 97.6, kms90d: 425.09 },
+    { bot: "tug-160", site: "Valeo-Greensburg", trips7d: 128, successful7d: 128, msr7d: 100.0, kms7d: 53.30, trips90d: 959, successful90d: 931, msr90d: 97.1, kms90d: 396.28 },
+    { bot: "sherpa10k-01", site: "Tenneco-Michigan-US", trips7d: 113, successful7d: 109, msr7d: 96.5, kms7d: 72.84, trips90d: 938, successful90d: 896, msr90d: 95.5, kms90d: 592.66 },
+    { bot: "pivot-warehouse", site: "Sanmina-Chennai", trips7d: 89, successful7d: 84, msr7d: 94.4, kms7d: 28.27, trips90d: 884, successful90d: 821, msr90d: 92.9, kms90d: 277.02 },
+    { bot: "tug-184", site: "Yokohama-Vizag", trips7d: 73, successful7d: 66, msr7d: 90.4, kms7d: 58.38, trips90d: 878, successful90d: 695, msr90d: 79.2, kms90d: 895.12 },
+    { bot: "xt-08", site: "Maruti Suzuki Manufacturing Plant-Kharkhoda", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 860, successful90d: 856, msr90d: 99.5, kms90d: 245.00 },
+    { bot: "tug-57", site: "Valeo-US", trips7d: 154, successful7d: 150, msr7d: 97.4, kms7d: 100.51, trips90d: 859, successful90d: 794, msr90d: 92.4, kms90d: 787.63 },
+    { bot: "tug-133", site: "TVS-Hosur", trips7d: 82, successful7d: 73, msr7d: 89.0, kms7d: 16.34, trips90d: 828, successful90d: 779, msr90d: 94.1, kms90d: 165.03 },
+    { bot: "tug-169", site: "Valeo-US", trips7d: 82, successful7d: 82, msr7d: 100.0, kms7d: 34.00, trips90d: 826, successful90d: 781, msr90d: 94.6, kms90d: 375.61 },
+    { bot: "tug-132", site: "Valeo-Greensburg", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 824, successful90d: 765, msr90d: 92.8, kms90d: 277.07 },
+    { bot: "xt-07", site: "Maruti Suzuki Manufacturing Plant-Kharkhoda", trips7d: 57, successful7d: 56, msr7d: 98.2, kms7d: 16.24, trips90d: 819, successful90d: 796, msr90d: 97.2, kms90d: 254.67 },
+    { bot: "tug-30-us-01", site: "Valeo-US", trips7d: 1, successful7d: 1, msr7d: 100.0, kms7d: 0.20, trips90d: 814, successful90d: 760, msr90d: 93.4, kms90d: 690.22 },
+    { bot: "tug-118", site: "YOKOHAMA-DAHEJ", trips7d: 97, successful7d: 96, msr7d: 99.0, kms7d: 30.16, trips90d: 805, successful90d: 792, msr90d: 98.4, kms90d: 253.65 },
+    { bot: "xt-02", site: "Maruti Suzuki Manufacturing Plant-Kharkhoda", trips7d: 30, successful7d: 30, msr7d: 100.0, kms7d: 10.62, trips90d: 778, successful90d: 762, msr90d: 97.9, kms90d: 276.04 },
+    { bot: "tug-145", site: "Valeo-Greensburg", trips7d: 3, successful7d: 2, msr7d: 66.7, kms7d: 1.01, trips90d: 759, successful90d: 752, msr90d: 99.1, kms90d: 242.52 },
+    { bot: "tug-84", site: "Ashok leyland-Hosur", trips7d: 144, successful7d: 121, msr7d: 84.0, kms7d: 63.33, trips90d: 751, successful90d: 617, msr90d: 82.2, kms90d: 328.89 },
+    { bot: "lifter-500-01", site: "Bosch Lite-Bangalore", trips7d: 145, successful7d: 143, msr7d: 98.6, kms7d: 4.92, trips90d: 749, successful90d: 581, msr90d: 77.6, kms90d: 29.78 },
+    { bot: "tug-101", site: "Valeo-US", trips7d: 3, successful7d: 3, msr7d: 100.0, kms7d: 1.31, trips90d: 687, successful90d: 596, msr90d: 86.8, kms90d: 486.30 },
+    { bot: "xt-lite-16", site: "Brose-Alabama", trips7d: 124, successful7d: 112, msr7d: 90.3, kms7d: 127.32, trips90d: 668, successful90d: 587, msr90d: 87.9, kms90d: 635.20 },
+    { bot: "tug-82", site: "Ashok leyland-Hosur", trips7d: 110, successful7d: 96, msr7d: 87.3, kms7d: 47.35, trips90d: 660, successful90d: 572, msr90d: 86.7, kms90d: 290.09 },
+    { bot: "tug-70", site: "Schneider-Electric-Chennai", trips7d: 527, successful7d: 521, msr7d: 98.9, kms7d: 95.71, trips90d: 639, successful90d: 633, msr90d: 99.1, kms90d: 115.88 },
+    { bot: "tug-89-yokohama-dahej-02", site: "YOKOHAMA-DAHEJ", trips7d: 63, successful7d: 60, msr7d: 95.2, kms7d: 58.20, trips90d: 630, successful90d: 602, msr90d: 95.6, kms90d: 584.29 },
+    { bot: "Palletmover-03", site: "Fleetguard Filters-Hosur", trips7d: 48, successful7d: 24, msr7d: 50.0, kms7d: 5.55, trips90d: 613, successful90d: 345, msr90d: 56.3, kms90d: 68.45 },
+    { bot: "xt-01", site: "Electrolux-Rayong", trips7d: 188, successful7d: 180, msr7d: 95.7, kms7d: 186.51, trips90d: 612, successful90d: 561, msr90d: 91.7, kms90d: 607.64 },
+    { bot: "tug-166", site: "Valeo-US", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 548, successful90d: 507, msr90d: 92.5, kms90d: 290.37 },
+    { bot: "xt-20", site: "Epiroc-Nashik", trips7d: 30, successful7d: 27, msr7d: 90.0, kms7d: 7.51, trips90d: 521, successful90d: 331, msr90d: 63.5, kms90d: 123.22 },
+    { bot: "xt-06", site: "Maruti Suzuki Manufacturing Plant-Kharkhoda", trips7d: 30, successful7d: 30, msr7d: 100.0, kms7d: 10.62, trips90d: 502, successful90d: 483, msr90d: 96.2, kms90d: 175.69 },
+    { bot: "tug-75-yokohama-dahej-01", site: "YOKOHAMA-DAHEJ", trips7d: 54, successful7d: 50, msr7d: 92.6, kms7d: 36.39, trips90d: 493, successful90d: 479, msr90d: 97.2, kms90d: 259.32 },
+    { bot: "tug-179", site: "Harley Davidson-York", trips7d: 72, successful7d: 62, msr7d: 86.1, kms7d: 18.24, trips90d: 469, successful90d: 386, msr90d: 82.3, kms90d: 119.29 },
+    { bot: "xt-lite-12", site: "Brose-Alabama", trips7d: 68, successful7d: 63, msr7d: 92.6, kms7d: 112.89, trips90d: 448, successful90d: 372, msr90d: 83.0, kms90d: 847.66 },
+    { bot: "xt-18", site: "CEAT-Vadodara", trips7d: 132, successful7d: 126, msr7d: 95.5, kms7d: 27.32, trips90d: 442, successful90d: 343, msr90d: 77.6, kms90d: 92.14 },
+    { bot: "tug-124", site: "Valeo-US", trips7d: 77, successful7d: 74, msr7d: 96.1, kms7d: 33.33, trips90d: 408, successful90d: 373, msr90d: 91.4, kms90d: 240.24 },
+    { bot: "tug-187", site: "Brose-Alabama", trips7d: 5, successful7d: 3, msr7d: 60.0, kms7d: 11.99, trips90d: 374, successful90d: 307, msr90d: 82.1, kms90d: 458.38 },
+    { bot: "tug-95-us-05", site: "Valeo-Greensburg", trips7d: 315, successful7d: 308, msr7d: 97.8, kms7d: 110.93, trips90d: 367, successful90d: 356, msr90d: 97.0, kms90d: 130.26 },
+    { bot: "tug-56-ceat-nagpur-08", site: "ceat-nagpur", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 344, successful90d: 328, msr90d: 95.3, kms90d: 74.70 },
+    { bot: "tug-78", site: "TVS-Hosur", trips7d: 21, successful7d: 20, msr7d: 95.2, kms7d: 3.15, trips90d: 343, successful90d: 299, msr90d: 87.2, kms90d: 51.67 },
+    { bot: "tug-99-us-09", site: "Kostal-Queretaro", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 303, successful90d: 296, msr90d: 97.7, kms90d: 76.09 },
+    { bot: "tug-130", site: "Saft-US", trips7d: 84, successful7d: 84, msr7d: 100.0, kms7d: 26.96, trips90d: 298, successful90d: 296, msr90d: 99.3, kms90d: 99.47 },
+    { bot: "tug-34-forbs-pune-02", site: "Forbes_Marshall-Pune", trips7d: 10, successful7d: 10, msr7d: 100.0, kms7d: 4.65, trips90d: 276, successful90d: 271, msr90d: 98.2, kms90d: 131.35 },
+    { bot: "tug-40", site: "Yokohama-Vizag", trips7d: 17, successful7d: 17, msr7d: 100.0, kms7d: 5.44, trips90d: 270, successful90d: 268, msr90d: 99.3, kms90d: 86.38 },
+    { bot: "tug-114", site: "Bosch Automotive Electronics India Pvt. Ltd-Bangalore", trips7d: 33, successful7d: 33, msr7d: 100.0, kms7d: 19.22, trips90d: 268, successful90d: 261, msr90d: 97.4, kms90d: 145.74 },
+    { bot: "pm-v2-08", site: "Autoliv India Private Ltd-Bangalore", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 217, successful90d: 95, msr90d: 43.8, kms90d: 30.72 },
+    { bot: "tug-24-tvsmotor-hosur-05", site: "TVS-Hosur", trips7d: 1, successful7d: 1, msr7d: 100.0, kms7d: 0.11, trips90d: 208, successful90d: 194, msr90d: 93.3, kms90d: 23.48 },
+    { bot: "tug-157", site: "Yokohama-Vizag", trips7d: 15, successful7d: 14, msr7d: 93.3, kms7d: 4.55, trips90d: 202, successful90d: 194, msr90d: 96.0, kms90d: 61.30 },
+    { bot: "PM-V2-03", site: "Owens Corning-Taloja", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 191, successful90d: 87, msr90d: 45.5, kms90d: 12.88 },
+    { bot: "pm-v2-04", site: "Owens Corning-Taloja", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 171, successful90d: 61, msr90d: 35.7, kms90d: 14.81 },
+    { bot: "tug-178", site: "schneider electric -Bangalore", trips7d: 5, successful7d: 4, msr7d: 80.0, kms7d: 1.04, trips90d: 168, successful90d: 130, msr90d: 77.4, kms90d: 40.36 },
+    { bot: "tug-38-us-02", site: "Valeo-US", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 162, successful90d: 115, msr90d: 71.0, kms90d: 160.51 },
+    { bot: "tug-71-schneider-chennai-02", site: "Schneider-Electric-Chennai", trips7d: 101, successful7d: 88, msr7d: 87.1, kms7d: 20.69, trips90d: 135, successful90d: 117, msr90d: 86.7, kms90d: 27.63 },
+    { bot: "tug-93-ceat-nagpur-09", site: "ceat-nagpur", trips7d: 130, successful7d: 126, msr7d: 96.9, kms7d: 30.20, trips90d: 133, successful90d: 127, msr90d: 95.5, kms90d: 30.75 },
+    { bot: "tug-180", site: "Yokohama-Vizag", trips7d: 8, successful7d: 8, msr7d: 100.0, kms7d: 1.93, trips90d: 126, successful90d: 117, msr90d: 92.9, kms90d: 30.77 },
+    { bot: "lite-33", site: "Hindustan Unilever-Sumerpur", trips7d: 110, successful7d: 83, msr7d: 75.5, kms7d: 13.05, trips90d: 110, successful90d: 83, msr90d: 75.5, kms90d: 13.05 },
+    { bot: "xt-lite-19", site: "Bekaert-Pune", trips7d: 38, successful7d: 20, msr7d: 52.6, kms7d: 21.76, trips90d: 108, successful90d: 62, msr90d: 57.4, kms90d: 66.31 },
+    { bot: "tug-88", site: "CEAT-Vadodara", trips7d: 95, successful7d: 88, msr7d: 92.6, kms7d: 19.78, trips90d: 95, successful90d: 88, msr90d: 92.6, kms90d: 19.78 },
+    { bot: "tug-148", site: "Schneider-Electric-Chennai", trips7d: 78, successful7d: 55, msr7d: 70.5, kms7d: 24.15, trips90d: 91, successful90d: 63, msr90d: 69.2, kms90d: 28.28 },
+    { bot: "tug-38-us-02", site: "Valeo-Greensburg", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 86, successful90d: 84, msr90d: 97.7, kms90d: 27.29 },
+    { bot: "tug-43-bosch-chennai-01", site: "Bosch-Chennai", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 86, successful90d: 80, msr90d: 93.0, kms90d: 13.38 },
+    { bot: "xt-11", site: "Meril-Vapi", trips7d: 8, successful7d: 0, msr7d: 0.0, kms7d: 4.43, trips90d: 78, successful90d: 13, msr90d: 16.7, kms90d: 43.47 },
+    { bot: "pivot-scrapyard", site: "Sanmina-Chennai", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 60, successful90d: 42, msr90d: 70.0, kms90d: 19.80 },
+    { bot: "xt-16", site: "Denso Kirloskar-Nelamangala", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 59, successful90d: 30, msr90d: 50.8, kms90d: 25.07 },
+    { bot: "tug-164", site: "Tenneco-Michigan-US", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 56, successful90d: 53, msr90d: 94.6, kms90d: 33.59 },
+    { bot: "tug-61", site: "Yokohama-Vizag", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 26, successful90d: 12, msr90d: 46.2, kms90d: 5.45 },
+    { bot: "xt-21", site: "Sai Life Sciences-Bidar_Kolaar", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 26, successful90d: 9, msr90d: 34.6, kms90d: 5.06 },
+    { bot: "pm-v2-02", site: "Owens Corning-Taloja", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 18, successful90d: 0, msr90d: 0.0, kms90d: 0.79 },
+    { bot: "PM-V2-01", site: "Owens Corning-Taloja", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 15, successful90d: 8, msr90d: 53.3, kms90d: 1.04 },
+    { bot: "pm-v2-12", site: "Autoliv India Private Ltd-Bangalore", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 14, successful90d: 10, msr90d: 71.4, kms90d: 2.13 },
+    { bot: "tug-95-us-05", site: "Airbus-US", trips7d: 315, successful7d: 308, msr7d: 97.8, kms7d: 110.93, trips90d: 2, successful90d: 1, msr90d: 50.0, kms90d: 0.75 },
+    { bot: "tug-126", site: "Forvia_Columbus_Canning", trips7d: 0, successful7d: 0, msr7d: 0.0, kms7d: 0.00, trips90d: 2, successful90d: 0, msr90d: 0.0, kms90d: 0.87 }
+  ];
+
+  // Tab 3: Spares Data (from CSV)
+  const sparesData = [
+    {dn:"AMIDC-DN-FY26-0169",customer:"ATC Tires Private Limited",item:"Kinco Hmi cable Assey",location:"Yokohama (Dahej)",qty:1.0,amount:551.99,bot:"S10K-10 / 01-26-TUG-06-01-010",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0169",customer:"ATC Tires Private Limited",item:"Incremental Encoder AMT132 Q",location:"Yokohama (Dahej)",qty:6.0,amount:23679.9,bot:"Tug 75 / T23X03Y03Z03AV075",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0167",customer:"Hindustan Unilever Limited",item:"Wifi Antenna- Jumper cable WPANT30169 S2B",location:"HUL Puducherry",qty:2.0,amount:1570.0,bot:"SL 37 / 01-25-LIT-01-01-0037",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0166",customer:"Samsung India Electronics Private Limited",item:"PV1 SAM RUBBER_MOUNT",location:"Samsung India Chennai",qty:1.0,amount:1900.0,bot:"SFF-1 / SFF2025001",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0166",customer:"Samsung India Electronics Private Limited",item:"PV1 SAM RUBBER",location:"Samsung India Chennai",qty:1.0,amount:2150.0,bot:"SFF-1 / SFF2025001",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0165",customer:"Maruti Suzuki India Limited",item:"connective peripherals CP_CANFD_2P_150",location:"MSIL Kharkhoda",qty:2.0,amount:54963.64,bot:"XT 07 / XT25X01Y01AV007",status:"Completed"},
+    {dn:"AMIDC-DN-FY26-0164",customer:"Bekaert Industries Private Limited",item:"connective peripherals CP_CANFD_2P_150",location:"Bekaert Industries Private Limited",qty:1.0,amount:27481.82,bot:"XT-22 / 01-25-TUG-05-01-0022",status:"Completed"},
+    {dn:"AMIDC-DN-FY26-0163",customer:"CEAT Limited",item:"Steering Controller Connector Assembly",location:"CEAT Limited (Halol)",qty:1.0,amount:6238.4,bot:"Tug 91 / 01-25-TUG-01-01-0091",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0162",customer:"Bosch Automotive Electronics India Private Limited",item:"Hex socket head cap screw M5x0.80 x 20 Stainless Steel",location:"Bosch (NNPura)",qty:14.0,amount:42.0,bot:"XT Lite 10 / XTL24LEM10",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0162",customer:"Bosch Automotive Electronics India Private Limited",item:"Rubber flap - 365mm hitch",location:"Bosch (NNPura)",qty:7.0,amount:1400.0,bot:"XT Lite 08 / XTL24LAM08",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0162",customer:"Bosch Automotive Electronics India Private Limited",item:"Connecting rod WM - 365mm",location:"Bosch (NNPura)",qty:7.0,amount:4375.0,bot:"XT Lite 07 / XTL24LAM07",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0162",customer:"Bosch Automotive Electronics India Private Limited",item:"Prevailing torque nut M5x0.80 Stainless Steel Din 982",location:"Bosch (NNPura)",qty:14.0,amount:28.0,bot:"XT Lite 10 / XTL24LEM10",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0161",customer:"ATC Tires Private Limited",item:"Hub Motor With Solid Tyre Connector Assembly",location:"Yokohama (Dahej)",qty:2.0,amount:36466.0,bot:"Tug 75 / T23X03Y03Z03AV075",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Main Enclosue (CP Board)",location:"CEAT Limited (Nagpur)",qty:9.0,amount:9000.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Spacer For Wifi And SSD",location:"CEAT Limited (Nagpur)",qty:20.0,amount:360.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"M3 X 6mm Pan Head, SS",location:"CEAT Limited (Nagpur)",qty:200.0,amount:486.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"M2 X 5 CSK",location:"CEAT Limited (Nagpur)",qty:20.0,amount:20.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Heatsink",location:"CEAT Limited (Nagpur)",qty:3.0,amount:11904.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Thermal Pad",location:"CEAT Limited (Nagpur)",qty:2.0,amount:424.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"3D Printed Spacers",location:"CEAT Limited (Nagpur)",qty:20.0,amount:100.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Slotted Nylon Slider",location:"CEAT Limited (Nagpur)",qty:20.0,amount:5500.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"M2.5 X 16 Pan Head, SS",location:"CEAT Limited (Nagpur)",qty:10.0,amount:21.5,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Thermal Paste",location:"CEAT Limited (Nagpur)",qty:10.0,amount:2720.6,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"M2.5 X 5 CSK, SS",location:"CEAT Limited (Nagpur)",qty:20.0,amount:40.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"M3 Nylon Washer",location:"CEAT Limited (Nagpur)",qty:20.0,amount:30.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0159",customer:"CEAT Limited",item:"Leaf Spring And Screws For Jetson",location:"CEAT Limited (Nagpur)",qty:10.0,amount:3520.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0158",customer:"Denso Kirloskar Industries Private Limited",item:"USB3.0 to RJ45 Giga bit adapter",location:"Denso Nelamangala",qty:1.0,amount:820.0,bot:"XT 16 / 01-25-TUG-05-01-0016",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0158",customer:"Denso Kirloskar Industries Private Limited",item:"NIBM100_UART Indicator",location:"Denso Nelamangala",qty:1.0,amount:3777.6,bot:"XT 16 / 01-25-TUG-05-01-0016",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0157",customer:"CEAT Limited",item:"SF Hitch",location:"CEAT Limited (Halol)",qty:1.0,amount:1500.0,bot:"Tug 115 / 01-25-TUG-01-01-0115",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0157",customer:"CEAT Limited",item:"Sherpa Tug V3",location:"CEAT Limited (Halol)",qty:1.0,amount:790427.0,bot:"Tug 115 / 01-25-TUG-01-01-0115",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0156",customer:"Bosch Automotive Electronics India Private Limited",item:"Samsung Galaxy Tab A7 Lite (08 Inch)",location:"Bosch (NNPura)",qty:1.0,amount:9713.0,bot:"Lifter500_1",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0155",customer:"ATC Tires Private Limited",item:"Dualshock 4 Wireless Controller(PS4)",location:"Yokohama (Dahej)",qty:1.0,amount:6250.0,bot:"Tug 89 / T23X03Y03Z03BV089",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0154",customer:"ATC Tires AP Private Limited",item:"LD3-24-10-K3-150-130403",location:"Yokohama (Vizag)",qty:2.0,amount:22000.0,bot:"Tug 184 / T23X03Y03Z03IV184",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0153",customer:"Hindustan Unilever Limited",item:"Tower Workstation for Fleet Manager",location:"HUL Puducherry",qty:1.0,amount:143500.0,bot:"SL 37 / 01-25-LIT-01-01-0037",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0152",customer:"Sanmina-SCI India Private Limited",item:"Panasonic Aux Battery Connector Assembly",location:"Sanmina-SCI India Private Limited (Kancheepuram1)",qty:1.0,amount:2498.6,bot:"Lite 34 / 01-25-LIT-03-01-0034",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0152",customer:"Sanmina-SCI India Private Limited",item:"Panasonic Aux Battery Connector Assembly",location:"Sanmina-SCI India Private Limited (Kancheepuram1)",qty:1.0,amount:2498.6,bot:"Lite 36 / 01-25-LIT-03-01-0036",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0151",customer:"Daimler India Commercial Vehicles Private Limited",item:"Auto Unhitch Enclosure V3",location:"Daimler Chennai",qty:1.0,amount:6270.0,bot:"XT 12 / XT25X01Y01DV012",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0150",customer:"Bosch Automotive Electronics India Private Limited",item:"Panasonic Aux Battery Connector Assembly",location:"Bosch (NNPura)",qty:1.0,amount:2498.6,bot:"XT Lite 07 / XTL24LAM07",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0149",customer:"Bosch Automotive Electronics India Private Limited",item:"Panasonic Aux Battery Connector Assembly",location:"Bosch (NNPura)",qty:1.0,amount:2565.0,bot:"Lifter500_1",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0145",customer:"Owens Corning India Private Limited",item:"PH Pan head screw M4x0.70 x 8 Stainless Steel",location:"Owens Corning India Private Limited",qty:16.0,amount:33.76,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0145",customer:"Owens Corning India Private Limited",item:"CAN Repeater Board",location:"Owens Corning India Private Limited",qty:4.0,amount:20801.2,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0145",customer:"Owens Corning India Private Limited",item:"Plain washer normal grade A M3 Stainless Steel",location:"Owens Corning India Private Limited",qty:16.0,amount:14.72,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0145",customer:"Owens Corning India Private Limited",item:"PH Pan head screw M3x0.50 x 8",location:"Owens Corning India Private Limited",qty:32.0,amount:85.12,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0145",customer:"Owens Corning India Private Limited",item:"Chamfered plain washer normal M4 Stainless Steel",location:"Owens Corning India Private Limited",qty:16.0,amount:13.6,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0148",customer:"Maruti Suzuki India Limited",item:"Kill Switch",location:"MSIL Kharkhoda",qty:2.0,amount:720.0,bot:"XT 08 / XT25X01Y01AV008",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0148",customer:"Maruti Suzuki India Limited",item:"Motor",location:"MSIL Kharkhoda",qty:1.0,amount:37500.0,bot:"XT 08 / XT25X01Y01AV008",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"Duraclik female crimping terminals",location:"Owens Corning India Private Limited",qty:16.0,amount:118.4,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"Cable 2core twisted 24 AWG(white/Blue,Blue)",location:"Owens Corning India Private Limited",qty:1.0,amount:85.0,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"HST, 6mm Dia, Black Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.24,amount:2.14,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"HST, 3mm Dia, Yellow Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.23,amount:1.66,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"HST, 8mm Dia, Yellow Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.48,amount:4.8,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"Ink Ribbon, Black Colour",location:"Owens Corning India Private Limited",qty:0.8,amount:4.0,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"Nano-Fit Crimp Terminal, Female, Tin plated 24-26 AWG(105300-2100)",location:"Owens Corning India Private Limited",qty:8.0,amount:79.68,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"Connector Nano fit 2 row 4 pin Female 2.5mm Pitch black color",location:"Owens Corning India Private Limited",qty:4.0,amount:85.48,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0147",customer:"Owens Corning India Private Limited",item:"4 pin duraclik receptacle White Connector",location:"Owens Corning India Private Limited",qty:8.0,amount:224.0,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"Cable 2core twisted 24 AWG(white/Blue,Blue)",location:"Owens Corning India Private Limited",qty:0.96,amount:81.6,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"Ink Ribbon, Black Colour",location:"Owens Corning India Private Limited",qty:0.8,amount:4.0,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"HST, 3mm Dia, Yellow Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.24,amount:1.73,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"Ferrule Terminal, 20 Awg, T In Plated, White Insulated (FSDX75-8-D)",location:"Owens Corning India Private Limited",qty:8.0,amount:205.36,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"Connector Nano fit 2 row 4 pin Female 2.5mm Pitch black color",location:"Owens Corning India Private Limited",qty:4.0,amount:85.48,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"HST, 8mm Dia, Yellow Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.48,amount:4.8,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"HST, 6mm Dia, Black Colour, 2:1",location:"Owens Corning India Private Limited",qty:0.24,amount:2.14,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0146",customer:"Owens Corning India Private Limited",item:"Nano-Fit Crimp Terminal, Female, Tin plated 24-26 AWG(105300-2100)",location:"Owens Corning India Private Limited",qty:8.0,amount:79.68,bot:"PM-5 / 01-25-PLM-02-01-005",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0144",customer:"Hindustan Unilever Limited",item:"Compute Board With Heat Sink Assembly",location:"HUL Dapada",qty:1.0,amount:81433.42,bot:"Lite 29 / L24FAM29",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0143",customer:"TVS Motor Company Limited",item:"Dispatch Button Connector Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:1998.73,bot:"Tug 39 / T30-336NCJ",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0143",customer:"TVS Motor Company Limited",item:"Panasonic Aux Battery Connector Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:2498.6,bot:"Tug 39 / T30-336NCJ",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0141",customer:"Owens Corning India Private Limited",item:"CAN repeater enc Manufactured",location:"Owens Corning India Private Limited",qty:4.0,amount:4296.0,bot:"PM-5 / 01-25-PLM-02-01-005",status:"Completed"},
+    {dn:"AMIDC-DN-FY26-0140",customer:"Autoliv India Private Limited",item:"Tug battery 36Ah",location:"Autoliv India Bengaluru",qty:1.0,amount:47557.39,bot:"Tug 170 / T23X03Y03Z03HV0170",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0139",customer:"CEAT Limited",item:"Incremental Encoder AMT132 Q",location:"CEAT Limited (Halol)",qty:6.0,amount:23679.66,bot:"Tug 115 / 01-25-TUG-01-01-0115",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0130",customer:"TVS Sri Chakra Limited",item:"Aux Battery Connector Assembly",location:"TVS Sri Chakra Madurai",qty:1.0,amount:615.0,bot:"Tug 42 / T22X03Y03Z03IV042",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0130",customer:"TVS Sri Chakra Limited",item:"Aux Battery Connector Assembly",location:"TVS Sri Chakra Madurai",qty:1.0,amount:615.0,bot:"Tug 36 / T30-309HEV",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0130",customer:"TVS Sri Chakra Limited",item:"Aux Battery Connector Assembly",location:"TVS Sri Chakra Madurai",qty:1.0,amount:615.0,bot:"Tug 62 / T22X03Y03Z03LV062",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0138",customer:"Hindustan Unilever Limited",item:"HYDRAULIC PUMP + POWER PACK AND SOLONOID COIL W/VALVE (48V 0.8 KW WITH 3L SQUARE)Pallet Mover",location:"HUL Dapada",qty:2.0,amount:27000.0,bot:"PM-13 / 01-25-PLM-02-01-013",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0137",customer:"CEAT Limited",item:"Hub Motor With Solid Tyre Connector Assembly",location:"CEAT Limited (Nagpur)",qty:2.0,amount:36458.0,bot:"Tug 93 / T23X03Y03Z03BV093",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0136",customer:"ATC Tires Private Limited",item:"Aux Battery Connector Assembly",location:"Yokohama (Dahej)",qty:2.0,amount:1230.0,bot:"Tug 89 / T23X03Y03Z03BV089",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0135",customer:"ATC Tires Private Limited",item:"Tug battery 36Ah",location:"Yokohama (Dahej)",qty:2.0,amount:95114.8,bot:"Tug 75 / T23X03Y03Z03AV075",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0134",customer:"Yokohama India Private Limited",item:"Steering Motor Connector Assembly",location:"Yokohama (Bahadurgarh)",qty:1.0,amount:12146.0,bot:"Tug 144 / T23X03Y03Z03GV144",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0134",customer:"Yokohama India Private Limited",item:"T3(N)-Compute 12Pin Connector Assembly",location:"Yokohama (Bahadurgarh)",qty:1.0,amount:700.64,bot:"Tug 144 / T23X03Y03Z03GV144",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0134",customer:"Yokohama India Private Limited",item:"Aux Battery Connector Assembly",location:"Yokohama (Bahadurgarh)",qty:1.0,amount:615.0,bot:"Tug 144 / T23X03Y03Z03GV144",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0134",customer:"Yokohama India Private Limited",item:"Steering Controller Connector Assembly",location:"Yokohama (Bahadurgarh)",qty:1.0,amount:6239.0,bot:"Tug 144 / T23X03Y03Z03GV144",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0133",customer:"Autoliv India Private Limited",item:"12 Inch Hub Motor",location:"Autoliv India Bengaluru",qty:1.0,amount:18700.0,bot:"Tug 171 / T23X03Y03Z03HV0171",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Hub Motor Controller Connector Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:7463.0,bot:"Tug 39 / T30-336NCJ",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Hub Motor With Solid Tyre Connector Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:18229.0,bot:"Tug 39 / T30-336NCJ",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Tug Charger Bay Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:35708.0,bot:"Tug 11 / T30-569NRN",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Tug Charger Bay Assembly",location:"TVS Motors (Hosur)",qty:1.0,amount:35708.0,bot:"Tug 55 / T22X03Y03Z03JV055",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Tug battery 36Ah",location:"TVS Motors (Hosur)",qty:1.0,amount:47581.84,bot:"Tug 11 / T30-569NRN",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0131-1",customer:"TVS Motor Company Limited",item:"Tug battery 36Ah",location:"TVS Motors (Hosur)",qty:2.0,amount:95163.68,bot:"Tug 39 / T30-336NCJ",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0132",customer:"ATC Tires Private Limited",item:"Compute Board With Heat Sink Assembly",location:"Yokohama (Dahej)",qty:2.0,amount:162950.66,bot:"Tug 75 / T23X03Y03Z03AV075",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Lugs Fork 1.5Sq",location:"Bosch (NNPura)",qty:2.0,amount:4.0,bot:"XT Lite 08 / XTL24LAM08",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Em Brake UFB 204 Rotar",location:"Bosch (NNPura)",qty:2.0,amount:10600.0,bot:"XT Lite 08 / XTL24LAM08",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Brake Spacer",location:"Bosch (NNPura)",qty:2.0,amount:60.0,bot:"XT Lite 07 / XTL24LAM07",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Brake Spacer",location:"Bosch (NNPura)",qty:2.0,amount:60.0,bot:"XT Lite 08 / XTL24LAM08",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Lugs Fork 1.5Sq",location:"Bosch (NNPura)",qty:2.0,amount:4.0,bot:"XT Lite 07 / XTL24LAM07",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Em Brake UFB 204 Rotar",location:"Bosch (NNPura)",qty:2.0,amount:10600.0,bot:"XT Lite 07 / XTL24LAM07",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Brake Spacer",location:"Bosch (NNPura)",qty:2.0,amount:60.0,bot:"XT Lite 11 / XTL24LEM11",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0129",customer:"Bosch Automotive Electronics India Private Limited",item:"Brake Spacer",location:"Bosch (NNPura)",qty:2.0,amount:60.0,bot:"XT Lite 10 / XTL24LEM10",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0128",customer:"CEAT Limited",item:"UPS ( APC SRV2KL-IN, 2 KVA)",location:"CEAT Limited (Nagpur)",qty:1.0,amount:37000.0,bot:"Tug 104 / T23X03Y03Z03CV104",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0127",customer:"Autoliv India Private Limited",item:"USB 3.0 Debug port",location:"Autoliv India Bengaluru",qty:1.0,amount:350.0,bot:"Tug 171 / T23X03Y03Z03HV0171",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0127",customer:"Autoliv India Private Limited",item:"Dispatch Button Connector Assembly",location:"Autoliv India Bengaluru",qty:1.0,amount:1986.0,bot:"Tug 171 / T23X03Y03Z03HV0171",status:"To Bill"},
+    {dn:"AMIDC-DN-FY26-0126",customer:"Bosch Automotive Electronics India Private Limited",item:"Igus Bush",location:"Bosch (NNPura)",qty:2.0,amount:474.0,bot:"XT Lite 10 / XTL24LEM10",status:"To Bill"}
+  ];
+
+  // Tab 4: CSM Weekly Update Data
+  const csmData = [
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-08", update: "Lifter 500 handed over." },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-10", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-07", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-13", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-15", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "XT Lite-11", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "NNP", amr: "Lifter 500", update: "" },
+    { csm: "Nakul", customer: "Ashok Leyland", location: "Hosur", amr: "Tug 84", update: "AMRs are used properly this month. MLL has requested to stop the ops after this month but AL would like to continue. Final Decision is expected on 31st April" },
+    { csm: "Nakul", customer: "Ashok Leyland", location: "Hosur", amr: "Tug 82", update: "" },
+    { csm: "Nakul", customer: "Aisin Automotive", location: "Bengaluru", amr: "Tug 156", update: "" },
+    { csm: "Nakul", customer: "Madura Coats", location: "Tirunelveli", amr: "Tug 182", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "Chennai", amr: "Tug 43", update: "Data not coming up in Sanjaya" },
+    { csm: "Nakul", customer: "Bosch", location: "Pune", amr: "XTlite 20", update: "" },
+    { csm: "Nakul", customer: "Bosch", location: "Pune", amr: "XT 10", update: "" },
+    { csm: "Nakul", customer: "Siemens", location: "Goa", amr: "Sherpa Lite", update: "Shipped L35 after repair. Communication with Addverb ASRS back to normal" },
+    { csm: "Nakul", customer: "Samsung VD", location: "Chennai", amr: "FlexFork - 1", update: "" },
+    { csm: "Nakul", customer: "Samsung VD", location: "Chennai", amr: "FlexFork - 2", update: "" },
+    { csm: "Nakul", customer: "Turbo Energy", location: "Chennai", amr: "XT", update: "" },
+    { csm: "Nakul", customer: "Sai Life", location: "Bidar", amr: "XT", update: "Not operational due to internal approval pending" },
+    { csm: "Nakul", customer: "Bekaert", location: "Pune", amr: "XT", update: "" },
+    { csm: "Nakul", customer: "Bekaert", location: "Pune", amr: "XT lite", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-107", update: "CP board: Need procure the enclosure (#1) and heat sink(#7). Hemant will be hand-carrying with the needed tools. Target date - 1st week of April" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-32", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-111", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-104", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-53", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-33", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-112", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-110", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-35", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-109", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-56", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-49", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-51", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Nagpur", amr: "Tug-93", update: "" },
+    { csm: "Kundan", customer: "CEAT", location: "Chennai", amr: "Tug-67", update: "2nd AMR pick-up end of March." },
+    { csm: "Kundan", customer: "CEAT", location: "Chennai", amr: "Tug-68", update: "" },
+    { csm: "Kundan", customer: "Toyoda Gosei", location: "Bidadi", amr: "Tug-63", update: "AMC : No update. TG and TS will be discussing internally." },
+    { csm: "Kundan", customer: "Toyoda Gosei", location: "Bidadi", amr: "Tug-76", update: "" },
+    { csm: "Kundan", customer: "HUL", location: "Dapada", amr: "Lite-29", update: "AMC update:Dharmesh to work with customer to negotiate the AMC cost." },
+    { csm: "Kundan", customer: "HUL", location: "Puducherry", amr: "Lite-37", update: "Network switch - Completed. But facing issue in Lite- 37,which needs Antenna cable to be replaced." },
+    { csm: "Kundan", customer: "HUL", location: "Puducherry", amr: "Lite-38", update: "" },
+    { csm: "Kundan", customer: "HUL", location: "Dapada", amr: "PM-", update: "Implementation update: Resume April 2nd. Engineer has comfrimed we are able to do the pick-up and drop-station runs." },
+    { csm: "Kundan", customer: "BAU", location: "Training", amr: "", update: "" },
+    { csm: "Kundan", customer: "HUL", location: "Sumerpur", amr: "Lite-33", update: "Handover completed - 17th March." },
+    { csm: "Kundan", customer: "Merck", location: "Bommasandra", amr: "Tug-138", update: "AMR is non-operational. Needs Aux battery and LCD replaced. Waiting on PO processed." },
+    { csm: "Kundan", customer: "Forbes Marshall", location: "Pune", amr: "Tug-34", update: "AMC Shared - No update." },
+    { csm: "Kundan", customer: "Hyundai", location: "Chennai", amr: "Tug-09", update: "No update on new AMR" },
+    { csm: "Kundan", customer: "MSIL", location: "KharKhoda", amr: "XT-02", update: "XT-08: Down since - Mar 2nd Facing issues on turn-around time with Bullworks. Mostly will be resolved by 30th March. (28days to resovle the issue)" },
+    { csm: "Kundan", customer: "MSIL", location: "KharKhoda", amr: "XT-03", update: "" },
+    { csm: "Kundan", customer: "MSIL", location: "KharKhoda", amr: "XT-06", update: "" },
+    { csm: "Kundan", customer: "MSIL", location: "KharKhoda", amr: "XT-07", update: "" },
+    { csm: "Kundan", customer: "MSIL", location: "KharKhoda", amr: "XT-08", update: "" },
+    { csm: "Kundan", customer: "Meril Life Science", location: "Vapi", amr: "XT-11", update: "Low usage." },
+    { csm: "Kundan", customer: "Luminous", location: "Pantnagar", amr: "PM-4", update: "2-D lidar was turned off without any prior communication. 23rd March it was turned on after internal discussion." },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "Dispatch for all the AMR - 27th March. Received on 29th March." },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "" },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "" },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "" },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "" },
+    { csm: "Kundan", customer: "Innovista", location: "Kolhapur", amr: "Liter-", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-01", update: "Network issue - Still no update from Global IT team. No response back on the multiple call." },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-02", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-03", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-04", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-05", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-06", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-07", update: "" },
+    { csm: "Kundan", customer: "Owens Corning", location: "Taloja", amr: "PM-09", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Vallam", amr: "Tug-74", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Vallam", amr: "Tug-77", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Vallam", amr: "Tug-79", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Oragadam", amr: "Tug-106", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Oragadam", amr: "Tug-117", update: "" },
+    { csm: "Kundan", customer: "Royal Enfield", location: "Oragadam", amr: "Tug-146", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 90", update: "Service engineer replacement as MIltan has to leave for his hometown" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 119", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 118", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 141", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 108", update: "Down for hub motor and encoder" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 75", update: "Down for spares(EPO, steering controller, CP board)" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 113", update: "Spare CP board req due to heat condition" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 137", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 121", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 64", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 85", update: "Issue with hub motor(stop and go issue)" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "Tug 89", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "XT 05", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Dahej", amr: "XT 04", update: "Not being used due to construction" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 40", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 157", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 61", update: "Finance team will discuss for AMC" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 65", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 92", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 180", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 183", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 189", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 184", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 44", update: "CAPEX is under process. PR made" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 116", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Vizag", amr: "Tug 122", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Bahadurgarh", amr: "Tug 149", update: "PR made for AMC. PO to release in a couple of days" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Bahadurgarh", amr: "Tug 144", update: "" },
+    { csm: "Ashhar", customer: "Yokohama", location: "Bahadurgarh", amr: "Tug 151", update: "" },
+    { csm: "Ashhar", customer: "Denso", location: "Nelamangla", amr: "XT 16", update: "Tyre issue- wear out and floor marking" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-83", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-86", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-91", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-115", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-120", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-139", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "Tug-152", update: "" },
+    { csm: "Ashhar", customer: "Ceat", location: "Halol", amr: "XT-18", update: "" },
+    { csm: "Ashhar", customer: "Electrolux", location: "Rayong", amr: "AMR 001", update: "" },
+    { csm: "Ashhar", customer: "Electrolux", location: "Rayong", amr: "AMR 002", update: "" },
+    { csm: "Ashhar", customer: "Electrolux", location: "Rayong", amr: "XT 01", update: "" },
+    { csm: "Surya", customer: "AutoLiv", location: "Bangalore", amr: "Tug-185", update: "" },
+    { csm: "Surya", customer: "AutoLiv", location: "Bangalore", amr: "Tug-188", update: "" },
+    { csm: "Surya", customer: "AutoLiv", location: "Bangalore", amr: "Tug-171", update: "" },
+    { csm: "Surya", customer: "AutoLiv", location: "Bangalore", amr: "Tug-170", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "Tug-55", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "Tug-102", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "Tug-103", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "Tug-135", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "XT-12", update: "" },
+    { csm: "Surya", customer: "Daimler", location: "Chennai", amr: "XT-13", update: "" },
+    { csm: "Surya", customer: "Sanmina", location: "Chennai", amr: "Pivot-WH", update: "" },
+    { csm: "Surya", customer: "Fleetguard", location: "Hosur", amr: "PM-3", update: "" },
+    { csm: "Surya", customer: "Schneider", location: "Attibelle, Bengaluru", amr: "Tug 178", update: "" },
+    { csm: "Surya", customer: "Schneider", location: "Attibelle, One campus", amr: "Tug 80", update: "" },
+    { csm: "Surya", customer: "Schneider", location: "Chennai", amr: "Tug 70", update: "" },
+    { csm: "Surya", customer: "Schneider", location: "Chennai", amr: "Tug 71", update: "" },
+    { csm: "Surya", customer: "Schneider", location: "Chennai", amr: "Tug 148", update: "" },
+    { csm: "Surya", customer: "Epiroc", location: "Nasik", amr: "XT-20", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug - 39", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug - 78", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug- 55", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug - 133", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug - 134", update: "pathway blocked" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug - 11", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug-20", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug-23", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug-140", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug-24", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Hosur", amr: "Tug-87", update: "pathway blocked" },
+    { csm: "Surya", customer: "TVS", location: "Mysore", amr: "Tug-136", update: "" },
+    { csm: "Surya", customer: "TVS", location: "Mysore", amr: "Lite-01", update: "" },
+    { csm: "Surya", customer: "TVS Tyres", location: "Madurai", amr: "Tug-36", update: "" },
+    { csm: "Surya", customer: "TVS Tyres", location: "Madurai", amr: "Tug-42", update: "" },
+    { csm: "Surya", customer: "TVS Tyres", location: "Madurai", amr: "Tug-62", update: "" }
+  ];
+
+  // Tab 5: Jira Commissioning Main Tickets
+  const inProgressTickets = [
+    { key: "COM-172", summary: "Commissioning for Tenneco Canada - 2 Sherpa 10K", status: "In Progress", days: 24, assignee: "timothy.boschert" },
+    { key: "COM-163", summary: "Commissioning for Contitech Mexico Sherpa 10K 3 quantity", status: "In Progress", days: 33, assignee: "miguel.diaz" },
+    { key: "COM-143", summary: "HUL, Dapada || Pallet Mover", status: "In Progress", days: 59, assignee: "vishal kadam" },
+    { key: "COM-88", summary: "Owens Corning, Taloja", status: "In Progress", days: 117, assignee: "Kundan Rathi" },
+    { key: "COM-68", summary: "Denso XT", status: "In Progress", days: 138, assignee: "Raja C" },
+    { key: "COM-8", summary: "Maruti Suzuki India Limited", status: "In Progress", days: 178, assignee: "Naveen" },
+    { key: "COM-5", summary: "Fleetguard - Hosur", status: "In Progress", days: 178, assignee: "Naveen" }
+  ];
+
+  const toDoTickets = [
+    { key: "COM-185", summary: "Commissioning for Yokohama 10K 6 nos", status: "To Do", days: 2, assignee: "Ashhar Khan" },
+    { key: "COM-184", summary: "Commissioning for Innovista Lifter || 5 Nos", status: "To Do", days: 3, assignee: "Kundan Rathi" },
+    { key: "COM-181", summary: "Commissioning for Daikin Thailand 10K 1 nos", status: "To Do", days: 11, assignee: "Unassigned" },
+    { key: "COM-173", summary: "Commissioning for CEAT Halol Spare AMR(V3.5)", status: "To Do", days: 22, assignee: "Ashhar Khan" },
+    { key: "COM-170", summary: "Commissioning for Tenneco Puebla - 1 XT LITE", status: "To Do", days: 24, assignee: "miguel.diaz" },
+    { key: "COM-165", summary: "Goodyear || 10K", status: "To Do", days: 30, assignee: "Unassigned" },
+    { key: "COM-162", summary: "Commissioning for Tenneco Puebla - 1 Pallet Mover", status: "To Do", days: 33, assignee: "miguel.diaz" },
+    { key: "COM-159", summary: "Bosch Spare XT Lite", status: "To Do", days: 50, assignee: "logesh.v" },
+    { key: "COM-47", summary: "Autoliv", status: "To Do", days: 160, assignee: "varun s pawar" },
+    { key: "COM-12", summary: "Daimler XT", status: "To Do", days: 178, assignee: "Naveen" }
+  ];
+
+  // Memoized filtered and sorted data
+  const filteredSummary = useMemo(() => {
+    return customerSummaryData.filter(row =>
+      row.customer.toLowerCase().includes(searchSummary.toLowerCase())
+    );
+  }, [searchSummary]);
+
+  const filteredBots = useMemo(() => {
+    return botPerformanceData.filter(row =>
+      row.bot.toLowerCase().includes(searchBots.toLowerCase()) ||
+      row.site.toLowerCase().includes(searchBots.toLowerCase())
+    );
+  }, [searchBots]);
+
+  const filteredSpares = useMemo(() => {
+    return sparesData.filter(row =>
+      row.customer.toLowerCase().includes(searchSpares.toLowerCase())
+    );
+  }, [searchSpares]);
+
+  const filteredJira = useMemo(() => {
+    const combined = [...inProgressTickets, ...toDoTickets];
+    return combined.filter(row =>
+      row.key.toLowerCase().includes(searchJira.toLowerCase()) ||
+      row.summary.toLowerCase().includes(searchJira.toLowerCase()) ||
+      row.assignee.toLowerCase().includes(searchJira.toLowerCase())
+    );
+  }, [searchJira]);
+
+  const filteredCsm = useMemo(() => {
+    return csmData.filter(row =>
+      row.csm.toLowerCase().includes(searchCsm.toLowerCase()) ||
+      row.customer.toLowerCase().includes(searchCsm.toLowerCase()) ||
+      row.location.toLowerCase().includes(searchCsm.toLowerCase())
+    );
+  }, [searchCsm]);
+
+  // Sorting logic
+  const sortedData = (data) => {
+    if (!sortConfig.key) return data;
+    const sorted = [...data].sort((a, b) => {
+      const aVal = a[sortConfig.key];
+      const bVal = b[sortConfig.key];
+      if (typeof aVal === "number") {
+        return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+      }
+      return sortConfig.direction === "asc"
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
+    });
+    return sorted;
+  };
+
+  const handleSort = (key) => {
+    setSortConfig({
+      key,
+      direction:
+        sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc",
+    });
+  };
+
+  const getMsrColor = (msr) => {
+    if (msr >= 95) return "text-green-400";
+    if (msr >= 85) return "text-yellow-400";
+    return "text-red-400";
+  };
+
+  const getDaysColor = (days) => {
+    if (days > 120) return "text-red-400";
+    if (days > 60) return "text-orange-400";
+    if (days > 30) return "text-yellow-400";
+    return "text-green-400";
+  };
+
+  // Summary stats for spares
+  const sparesStats = useMemo(() => {
+    const totalAmount = filteredSpares.reduce((sum, item) => sum + (item.amount || 0), 0);
+    const uniqueCustomers = new Set(filteredSpares.map(item => item.customer)).size;
+    const uniqueNotes = new Set(filteredSpares.map(item => item.dn)).size;
+    return {
+      totalItems: filteredSpares.length,
+      totalAmount: totalAmount,
+      uniqueCustomers,
+      uniqueNotes,
+    };
+  }, [filteredSpares]);
+
+  // CSM stats
+  const csmStats = useMemo(() => {
+    const withUpdates = filteredCsm.filter(r => r.update && r.update.trim().length > 0);
+    const csms = new Set(filteredCsm.map(r => r.csm));
+    return { total: filteredCsm.length, withUpdates: withUpdates.length, csmCount: csms.size };
+  }, [filteredCsm]);
+
+  return (
+    <div className="bg-gray-900 text-white min-h-screen">
+      {/* Header */}
+      <div className="bg-gray-800 border-b border-gray-700 p-6">
+        <h1 className="text-4xl font-bold mb-2">Ati Motors Weekly CS Dashboard</h1>
+        <p className="text-gray-300 text-lg">Week of March 23-30, 2026</p>
+      </div>
+
+      {/* Tabs Navigation */}
+      <div className="bg-gray-800 border-b border-gray-700 flex flex-wrap gap-2 p-4">
+        {[
+          { id: "summary", label: "Customer Summary" },
+          { id: "bots", label: "Bot Performance Rankings" },
+          { id: "spares", label: "Spares Details" },
+          { id: "csm", label: "Weekly CSM Update" },
+          { id: "jira", label: "Jira Commissioning" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 rounded font-semibold transition ${
+              activeTab === tab.id
+                ? "bg-blue-600 text-white"
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {/* Tab 1: Customer Summary */}
+        {activeTab === "summary" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Customer Summary (Grafana Weekly)</h2>
+            <input
+              type="text"
+              placeholder="Search by customer name..."
+              value={searchSummary}
+              onChange={(e) => setSearchSummary(e.target.value)}
+              className="w-full mb-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500"
+            />
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    {["Customer", "Total Trips", "Successful Trips", "Distance (km)", "MSR (%)"].map((col) => (
+                      <th
+                        key={col}
+                        onClick={() => handleSort(col === "Total Trips" ? "total" : col === "Successful Trips" ? "successful" : col === "Distance (km)" ? "distance" : col === "MSR (%)" ? "msr" : "customer")}
+                        className="px-4 py-3 text-left cursor-pointer hover:bg-gray-700 transition"
+                      >
+                        {col} {sortConfig.key === (col === "Total Trips" ? "total" : col === "Successful Trips" ? "successful" : col === "Distance (km)" ? "distance" : col === "MSR (%)" ? "msr" : "customer") && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedData(filteredSummary).map((row, idx) => (
+                    <tr key={idx} className={`border-b border-gray-700 ${idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition`}>
+                      <td className="px-4 py-3">{row.customer}</td>
+                      <td className="px-4 py-3">{row.total}</td>
+                      <td className="px-4 py-3">{row.successful}</td>
+                      <td className="px-4 py-3">{row.distance}</td>
+                      <td className={`px-4 py-3 font-semibold ${getMsrColor(row.msr)}`}>{row.msr}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: Bot Performance Rankings */}
+        {activeTab === "bots" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Bot Performance Rankings</h2>
+            <input
+              type="text"
+              placeholder="Search by bot or site..."
+              value={searchBots}
+              onChange={(e) => setSearchBots(e.target.value)}
+              className="w-full mb-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500"
+            />
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    <th onClick={() => handleSort("bot")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition">Bot {sortConfig.key === "bot" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("site")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition">Site {sortConfig.key === "site" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("trips7d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-cyan-300">Trips (7d) {sortConfig.key === "trips7d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("successful7d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-cyan-300">OK (7d) {sortConfig.key === "successful7d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("msr7d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-cyan-300">MSR (7d) {sortConfig.key === "msr7d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("trips90d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-purple-300">Trips (90d) {sortConfig.key === "trips90d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("successful90d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-purple-300">OK (90d) {sortConfig.key === "successful90d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                    <th onClick={() => handleSort("msr90d")} className="px-3 py-3 text-left cursor-pointer hover:bg-gray-700 transition text-purple-300">MSR (90d) {sortConfig.key === "msr90d" && (sortConfig.direction === "asc" ? "\u2191" : "\u2193")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedData(filteredBots).map((row, idx) => (
+                    <tr key={idx} className={`border-b border-gray-700 ${idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition`}>
+                      <td className="px-3 py-3 font-mono text-sm">{row.bot}</td>
+                      <td className="px-3 py-3 text-sm">{row.site}</td>
+                      <td className="px-3 py-3">{row.trips7d}</td>
+                      <td className="px-3 py-3">{row.successful7d}</td>
+                      <td className={`px-3 py-3 font-semibold ${getMsrColor(row.msr7d)}`}>{row.msr7d}%</td>
+                      <td className="px-3 py-3">{row.trips90d}</td>
+                      <td className="px-3 py-3">{row.successful90d}</td>
+                      <td className={`px-3 py-3 font-semibold ${getMsrColor(row.msr90d)}`}>{row.msr90d}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Spares Details */}
+        {activeTab === "spares" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Spares Details (SMR Delivery Notes)</h2>
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">Total Items</p>
+                <p className="text-2xl font-bold">{sparesStats.totalItems}</p>
+              </div>
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">Total Amount</p>
+                <p className="text-2xl font-bold text-green-400">₹{(sparesStats.totalAmount / 100000).toFixed(2)}L</p>
+              </div>
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">Unique Customers</p>
+                <p className="text-2xl font-bold">{sparesStats.uniqueCustomers}</p>
+              </div>
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">Delivery Notes</p>
+                <p className="text-2xl font-bold">{sparesStats.uniqueNotes}</p>
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="Filter by customer name..."
+              value={searchSpares}
+              onChange={(e) => setSearchSpares(e.target.value)}
+              className="w-full mb-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500"
+            />
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    {["Delivery Note", "Customer", "Item", "Location", "Qty", "Amount (₹)", "Bot/Sherpa", "Status"].map((col) => (
+                      <th key={col} className="px-4 py-3 text-left text-sm">
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSpares.map((row, idx) => (
+                    <tr key={idx} className={`border-b border-gray-700 ${idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition text-sm`}>
+                      <td className="px-4 py-3 font-mono text-xs">{row.dn}</td>
+                      <td className="px-4 py-3">{row.customer}</td>
+                      <td className="px-4 py-3 max-w-xs truncate" title={row.item}>{row.item}</td>
+                      <td className="px-4 py-3 text-gray-400 text-xs">{row.location}</td>
+                      <td className="px-4 py-3">{row.qty}</td>
+                      <td className="px-4 py-3 font-semibold text-green-400">₹{row.amount.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-gray-400 text-xs max-w-xs truncate" title={row.bot}>{row.bot}</td>
+                      <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-xs ${row.status === "Completed" ? "bg-green-900 text-green-200" : "bg-yellow-900 text-yellow-200"}`}>{row.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 4: Weekly CSM Update */}
+        {activeTab === "csm" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Weekly CSM Update Sheet</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">Total AMRs Tracked</p>
+                <p className="text-2xl font-bold">{csmStats.total}</p>
+              </div>
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">With Updates</p>
+                <p className="text-2xl font-bold text-yellow-400">{csmStats.withUpdates}</p>
+              </div>
+              <div className="bg-gray-800 p-4 rounded border border-gray-700">
+                <p className="text-gray-400 text-sm">CSMs</p>
+                <p className="text-2xl font-bold">{csmStats.csmCount}</p>
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="Search by CSM, customer, or location..."
+              value={searchCsm}
+              onChange={(e) => setSearchCsm(e.target.value)}
+              className="w-full mb-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500"
+            />
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    <th className="px-4 py-3 text-left">CSM</th>
+                    <th className="px-4 py-3 text-left">Customer</th>
+                    <th className="px-4 py-3 text-left">Location</th>
+                    <th className="px-4 py-3 text-left">AMR</th>
+                    <th className="px-4 py-3 text-left">Update</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCsm.map((row, idx) => (
+                    <tr key={idx} className={`border-b border-gray-700 ${row.update && row.update.trim() ? "bg-yellow-900/30 border-l-4 border-l-yellow-500" : idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition`}>
+                      <td className="px-4 py-3 font-semibold">{row.csm}</td>
+                      <td className="px-4 py-3">{row.customer}</td>
+                      <td className="px-4 py-3 text-gray-400">{row.location}</td>
+                      <td className="px-4 py-3 font-mono text-sm">{row.amr}</td>
+                      <td className={`px-4 py-3 text-sm ${row.update && row.update.trim() ? "text-yellow-200 font-medium" : "text-gray-500 italic"}`}>{row.update && row.update.trim() ? row.update : "No update"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 5: Jira Commissioning Tickets (Main Tickets Only) */}
+        {activeTab === "jira" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Jira Commissioning Tickets (Main Tickets Only)</h2>
+            <input
+              type="text"
+              placeholder="Search by key, title, or assignee..."
+              value={searchJira}
+              onChange={(e) => setSearchJira(e.target.value)}
+              className="w-full mb-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500"
+            />
+
+            {/* In Progress Section */}
+            <h3 className="text-xl font-bold mt-6 mb-3 text-blue-400">In Progress ({inProgressTickets.length})</h3>
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    <th className="px-4 py-3 text-left">Key</th>
+                    <th className="px-4 py-3 text-left">Title</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">Days</th>
+                    <th className="px-4 py-3 text-left">Assignee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredJira
+                    .filter(t => t.status === "In Progress")
+                    .map((row, idx) => (
+                      <tr key={idx} className={`border-b border-gray-700 ${idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition`}>
+                        <td className="px-4 py-3 font-mono text-sm font-semibold text-blue-400">{row.key}</td>
+                        <td className="px-4 py-3">{row.summary}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-3 py-1 bg-yellow-900 text-yellow-100 rounded text-sm font-semibold">
+                            {row.status}
+                          </span>
+                        </td>
+                        <td className={`px-4 py-3 font-semibold ${getDaysColor(row.days)}`}>{row.days}d</td>
+                        <td className="px-4 py-3 text-gray-300">{row.assignee}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* To Do Section */}
+            <h3 className="text-xl font-bold mt-6 mb-3 text-gray-300">To Do ({toDoTickets.length})</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    <th className="px-4 py-3 text-left">Key</th>
+                    <th className="px-4 py-3 text-left">Title</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">Days</th>
+                    <th className="px-4 py-3 text-left">Assignee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredJira
+                    .filter(t => t.status === "To Do")
+                    .map((row, idx) => (
+                      <tr key={idx} className={`border-b border-gray-700 ${idx % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700 transition`}>
+                        <td className="px-4 py-3 font-mono text-sm font-semibold text-blue-400">{row.key}</td>
+                        <td className="px-4 py-3">{row.summary}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-3 py-1 bg-gray-700 text-gray-200 rounded text-sm font-semibold">
+                            {row.status}
+                          </span>
+                        </td>
+                        <td className={`px-4 py-3 font-semibold ${getDaysColor(row.days)}`}>{row.days}d</td>
+                        <td className="px-4 py-3 text-gray-300">{row.assignee}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<AtiMotorsCSsDashboard />);
+  </script>
+</body>
+</html>
